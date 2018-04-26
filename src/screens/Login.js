@@ -50,9 +50,14 @@ export default class Login extends Component {
             }
             AsyncStorage.setItem('usuario', JSON.stringify(usuario))
 
-            AsyncStorage.getItem('usuario')
-                .then(usuarioStringified => JSON.parse(usuarioStringified))
-                .then(usuario => console.warn(usuario.nome))
+            //AsyncStorage.getItem('usuario')
+                //.then(usuarioStringified => JSON.parse(usuarioStringified))
+                //.then(usuario => console.warn(usuario.nome))
+
+                this.props.navigator.resetTo({
+                    screen: 'FeedScreen',
+                    title: 'Instalura'
+                })
          })
          .catch(error => {
             this.setState({validacao: error.message})

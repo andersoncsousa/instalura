@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import {AsyncStorage} from 'react-native'
 import {
   AppRegistry,
   StyleSheet,
@@ -17,7 +18,20 @@ export default class Feed extends Component {
   }
 
   componentDidMount() {
-    fetch('https://instalura-api.herokuapp.com/api/public/fotos/rafael')
+    const uri = 'https://instalura-api.herokuapp.com/api/public/fotos'
+
+    AsyncStorage.getItem('usuario')
+      .then(usuarioEmTexto => JSON.parse(usuarioEmTexto))
+      .then(usuario => {
+        const request = {
+          headers: new Headers({
+              "X-AUTH-TOKEN": usuario.token
+          })
+        }
+        return request
+      })
+
+      .then(request => fetch(uri, request))
       .then(response => response.json())
       .then(json => this.setState({fotos: json}))
   }
@@ -46,6 +60,20 @@ export default class Feed extends Component {
     const fotos = this.state.fotos.map(foto => 
       foto.id === fotoAtualizada.id ? fotoAtualizada : foto)
     this.setState({fotos});
+    
+    const uri = `https://instalura-api.herokuapp.com/api/fotos/${idFoto}/like`
+    AsyncStorage.getItem('usuario')
+        .then(usuario => JSON.parse(usuario))
+        .then(usuario => {
+            const request = {
+                method: 'POST',
+                headers: new Headers({
+                    "X-AUTH-TOKEN": usuario.token
+                })
+            }
+            return request
+        })
+        .then(request => fetch(uri, request))
 
   
   }
